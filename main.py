@@ -4,7 +4,7 @@ import ast
 
 
 def db(name):
-    soc.send(f"{[name]}\n".encode())
+    soc.send(f"{[name]}".encode())
     data = soc.recv(1024).decode()
     print(data)
 
@@ -14,6 +14,7 @@ class Game:
     def __init__(self, name):
         self.name = name
 
+        db(self.name)
         Game.menu(self)
     
     def menu(self):
