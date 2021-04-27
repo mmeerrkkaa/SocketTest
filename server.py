@@ -29,11 +29,8 @@ while True:
                 cursor.execute(f"INSERT INTO users VALUES ('{data[0]}', '0', '0', '[]', '100')")#вводит все данные об участнике в БД
                 conn.commit()
             else:
-                pass
-            
-            cursor.execute(f'SELECT * FROM users where name="{data[0]}"')
-
-            con.send((f"{cursor.fetchone()}").encode())
+                cursor.execute(f'SELECT * FROM users where name="{data[0]}"')
+                con.send((f"{cursor.fetchone()}").encode())
 
         elif len(data) == 5:
             cursor.execute(f'UPDATE users SET games={data[1]}, atmps={data[2]}, log={data[3]}, RandomNumber={data[4]} where name={data[0]}')

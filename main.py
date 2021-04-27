@@ -5,18 +5,14 @@ import ast
 
 def db(name):
     soc.send(f"{[name]}\n".encode())
-    data = soc.recv(1024)
+    data = soc.recv(1024).decode()
     print(data)
 
-    return ast.literal_eval(data.decode())
+    return ast.literal_eval(data)
 
 class Game:
     def __init__(self, name):
         self.name = name
-
-        data = db(self.name)
-
-        
 
         Game.menu(self)
     
