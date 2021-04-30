@@ -1,19 +1,25 @@
 from random import randint
 import socket
 import ast
+import json
 
+def soc_open(addres):
+    soc = socket.socket()
+    soc.connect((addres, 8989))
+    return soc
 
 def db(name):
+    soc = soc_open(addres)
     soc.send(f"{[name]}".encode())
     data = soc.recv(1024).decode()
     print(data)
-
+    soc.close()
     return ast.literal_eval(data)
 
 class Game:
     def __init__(self, name):
         self.name = name
-
+        print(1)
         db(self.name)
         Game.menu(self)
     
@@ -33,7 +39,7 @@ class Game:
         poptk = 0
 
         while 1:
-        #    print(Num)
+            print(Num)
             a = int(input("Выберите число: "))
             poptk += 1
             if a == Num:
@@ -41,10 +47,17 @@ class Game:
                 data = db(self.name)
                 games = data[1] + 1
                 atmps = data[2] + poptk
-                log = ast.literal_eval(data[3]).append([ast.literal_eval(data[3])[-1][0] + 1 if len(ast.literal_eval(data[3])) != 0 else 1, poptk, Num])
 
-                soc.send(f"{[self.name, games, atmps, log, data[4]]}\n".encode())
+                log = json.loads(data[3])
+                print(log)
+                print(type(log))
+                log.append([ast.literal_eval(data[3])[-1][0] + 1 if len(ast.literal_eval(data[3])) != 0 else 1, poptk, Num])
+                print(log)
+                soc = soc_open(addres)
+                
+                soc.send(f"{[self.name, games, atmps, log, str(data[4])]}\n".encode())
                 data = soc.recv(1024)
+                soc.close()
                 break
             
             elif a > Num:
@@ -69,7 +82,8 @@ class Game:
         
         print(f"Ср.Кол-во попыток: {round(poptk/count, 1)}")
         
-soc = socket.socket()
-soc.connect(("127.0.0.1", 8989))
+addres = "127.0.0.1"
+
+#soc.connect(("127.0.0.1", 8989))
 
 Game("merka")
