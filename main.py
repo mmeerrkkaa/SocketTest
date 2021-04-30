@@ -20,17 +20,19 @@ class Game:
     def __init__(self, name):
         self.name = name
         print(1)
-        db(self.name)
+        db(name)
         Game.menu(self)
     
     def menu(self):
         while 1:
-            a = int(input("1) начать игру\n2)Посмотреть статистику: "))
+            a = int(input("1) начать игру\n2) Посмотреть статистику\n3) Топ по кол-ву игр: "))
 
             if a == 1:
                 Game.play(self)
             elif a == 2:
                 Game.CheckLog(self)
+            elif a == 3:
+                Game.Tops(self)
 
 
     def play(self):
@@ -81,6 +83,39 @@ class Game:
             print(f"Игра №{i[0]} | Попыток: {i[1]} | Загаданное число: {i[2]}")
         
         print(f"Ср.Кол-во попыток: {round(poptk/count, 1)}")
+    
+    def Tops(self):
+        soc = soc_open(addres)
+        soc.send("топ".encode())
+        top = soc.recv(1024).decode()
+        top = ast.literal_eval(top)
+        text = ""
+        for i in range(len(top)):
+            text += f"{i+1} место: {top[i][0]} = {top[i][1]} Игр\n"
+        print(text)
+
+        a = int(input("Получить полную статистику игрока. Введите место или 0 для отмены: "))
+        if a == 0:
+            soc.close()
+            
+        else:
+            soc = soc_open(addres)
+          #  try:
+            print(top[a-1])
+            print(f"Игр: {top[a-1][1]}")
+            if len(ast.literal_eval(top[a-1][3])) == 0:
+                return
+            poptk = 0
+            count = 0
+            for i in ast.literal_eval(top[a-1][3]):
+                poptk += i[1]
+                count += 1
+                print(f"Игра №{i[0]} | Попыток: {i[1]} | Загаданное число: {i[2]}")
+            print(f"Ср.Кол-во попыток: {round(poptk/count, 1)}")
+
+         #   except: print("Err")
+
+        
         
 addres = "127.0.0.1"
 
