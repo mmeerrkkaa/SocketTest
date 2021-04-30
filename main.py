@@ -4,22 +4,28 @@ import ast
 import json
 
 def soc_open(addres):
-    soc = socket.socket()
-    soc.connect((addres, 8989))
+    
+    try:
+        soc = socket.socket()
+        soc.connect((addres, 8989))
+        
+    except:
+        print("Подключение не удалось")
+        addres = input("Айпи: ")
+        soc_open(addres)
     return soc
+    
 
 def db(name):
     soc = soc_open(addres)
     soc.send(f"{[name]}".encode())
     data = soc.recv(1024).decode()
-    print(data)
     soc.close()
     return ast.literal_eval(data)
 
 class Game:
     def __init__(self, name):
         self.name = name
-        print(1)
         db(name)
         Game.menu(self)
     
@@ -117,8 +123,8 @@ class Game:
 
         
         
-addres = "127.0.0.1"
+addres = input("Айпи: ")
 
 #soc.connect(("127.0.0.1", 8989))
 
-Game("merka")
+Game(input("Ник: "))
