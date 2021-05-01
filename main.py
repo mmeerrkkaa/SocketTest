@@ -10,7 +10,7 @@ def soc_open(addres):
         soc.connect((addres, 8989))
         
     except:
-        print("Подключение не удалось")
+        print("Ошибка подключения")
         addres = input("Айпи: ")
         soc_open(addres)
     return soc
@@ -121,10 +121,9 @@ class Game:
 
          #   except: print("Err")
 
-        
-        
+      
 addres = input("Айпи: ")
-
+soc_open(addres)
 #soc.connect(("127.0.0.1", 8989))
 
 Game(input("Ник: "))
