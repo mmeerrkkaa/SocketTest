@@ -49,25 +49,36 @@ class User:  # тут мы выполняем все действия связа
 async def handle_client(reader, writer):
 
 
-    while 1:
-        data = (await reader.read(1024)).decode('utf8')
+	while 1:
+		user = (await reader.read(1024)).decode('utf8')
+		data = (await reader.read(1024)).decode('utf8')
 
-        data = ast.literal_eval(data)
-        print(data)
+		try:
+			data = ast.literal_eval(data)
+		except:
+			print("exc")
+			if user[:-1] in client:
+				print(client)
+				client.pop(user[:-1])
+				print(client)
+				break
+			else:
+				break
+		print(data, user)
 
 
-        if data[0] == "Connection": # тут я буду принимать команды и обрабатывать. Шифрования нет, т.к тренировочный проект
-        	Users = User(data[1])
-        	client[data[1]] = Users
-        	response = client[data[1]].Connection()
+		if data[0] == "Connection": # тут я буду принимать команды и обрабатывать. Шифрования нет, т.к тренировочный проект
+			Users = User(data[1])
+			client[data[1]] = Users
+			response = client[data[1]].Connection()
 
-        elif data[0] in dir(User):  # тут не работает.
-        	response = f'{client[data[1]].{data[0]}()}\n' # Я хотел проверять, существует ли функция в классе и если существует, то вызвать её
+        #elif data[0] in dir(User):  # тут не работает.
+        #	response = f'{client[data[1]].{data[0]}()}\n' # Я хотел проверять, существует ли функция в классе и если существует, то вызвать её
 
 
-        writer.write(response.encode('utf8'))
-        await writer.drain()
-    writer.close()
+		writer.write(response.encode('utf8'))
+		await writer.drain()
+	writer.close()
 
 async def run_server():
     server = await asyncio.start_server(handle_client, 'localhost', 15557)
