@@ -50,12 +50,12 @@ async def handle_client(reader, writer):
 
 
 	while 1:
-		user = (await reader.read(1024)).decode('utf8')
+		user = (await reader.read(1024)).decode('utf8') # Получаем имя пользователя. Если следующая команда не поступит, значит пользователль вышел
 		data = (await reader.read(1024)).decode('utf8')
 
-		try:
+		try: # Если можем преобразовать текст, значит всё ок
 			data = ast.literal_eval(data)
-		except:
+		except: # Тут мы можем получить только пустую строку, если была получена пустая строка, значит пользователь вышел
 			print("exc")
 			if user[:-1] in client:
 				print(client)
