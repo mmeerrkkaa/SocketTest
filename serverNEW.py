@@ -82,7 +82,7 @@ async def handle_client(reader, writer):
 				client[user] = Users
 				response = client[user].Connection()
 
-		elif data[0] == "Запрос данных":
+		elif data[0] == "Запрос данных": # Пользователю отправляется строка(массив) со всеми своими данными
 			response = client[user].GetInfo()
 
 
