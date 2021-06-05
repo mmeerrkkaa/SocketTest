@@ -18,20 +18,32 @@ client = {} # тут я буду хранить подключившивхся �
 class User:  # тут мы выполняем все действия связанные с аккаунтами (в будущем по крайне мере)
 	def __init__(self, name):
 		self.name = name
-		User.CheckReg(self) # проверка на существование
+
+
+	def Connection(self):
+		print(f"[{self.name}] Подключился")
+		print(client[self.name])
+		return User.CheckReg(self) # проверка на существование
 
 	def CheckReg(self):
 		if cursor.execute(f'SELECT * FROM users where name="{self.name}"').fetchone() == None: # Если аккаунт не создан, то создаём
-			print(f"{self.name} - регистрирует аккаунт")
 			sqliteAdd = json.dumps("[]")
 			cursor.execute(f"INSERT INTO users VALUES ('{self.name}', '0', '0', {sqliteAdd}, '100')")#вводит все данные об участнике в БД
 			conn.commit()
+			print(f"{self.name} - регистрирует аккаунт")
+			return "Вы зарегистрировали аккаунт"
+
 		else: # Если создан, то загружаем данные из базы данных
 			self.games = cursor.execute(f'SELECT games FROM users where name="{self.name}"').fetchone()[0]
 			self.atmps = cursor.execute(f'SELECT atmps FROM users where name="{self.name}"').fetchone()[0]
 			self.log = ast.literal_eval(cursor.execute(f'SELECT log FROM users where name="{self.name}"').fetchone()[0])
-			self.RandomNumber = cursor.execute(f'SELECT RandomNumber FROM users where name="{self.name}"').fetchone()
+			self.RandomNumber = cursor.execute(f'SELECT RandomNumber FROM users where name="{self.name}"').fetchone()[0]
 			print(f"[{self.name}] Аккаунт загружен")
+			return "Аккаунт загружен"
+
+	def GetInfo(self):
+		print(1)
+		return self.name
 
 
 async def handle_client(reader, writer):
@@ -44,12 +56,15 @@ async def handle_client(reader, writer):
         print(data)
 
 
-        if data[0] == "Подключение": # тут я буду принимать команды и обрабатывать. Шифрования нет, т.к тренировочный проект
-        	print(f"[{data[1]}] Подключился")
-        	client[data[1]] = User(data[1])
-        	print(client[data[1]])
+        if data[0] == "Connection": # тут я буду принимать команды и обрабатывать. Шифрования нет, т.к тренировочный проект
+        	Users = User(data[1])
+        	client[data[1]] = Users
+        	response = client[data[1]].Connection()
 
-        response = f'{client[data[1]]}\n'
+        elif data[0] in dir(User):  # тут не работает.
+        	response = f'{client[data[1]].{data[0]}()}\n' # Я хотел проверять, существует ли функция в классе и если существует, то вызвать её
+
+
         writer.write(response.encode('utf8'))
         await writer.drain()
     writer.close()
