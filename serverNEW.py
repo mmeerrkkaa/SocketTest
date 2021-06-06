@@ -49,17 +49,22 @@ class User:
 		print(f"[{self.name}] - Запрашивает свои данные")
 		return str(data)
 
+	def update(self, games, atmps, log, randNum):
+		sqliteAdd = json.dumps(log)
+		cursor.execute(f'UPDATE users SET games="{games}", atmps="{atmps}", log="{sqliteAdd}", RandomNumber="{randNum}" where name="{self.name}"')
+		conn.commit()
+		print(f"[{self.name} Сыграл игру №{games}]")
+
 
 
 
 async def handle_client(reader, writer):
-
+	user = (await reader.read(1024)).decode('utf8')[:-1]
 	while 1:
-		# Получаем имя пользователя. Если следующая команда не поступит, значит пользователль вышел
-		user = (await reader.read(1024)).decode('utf8')[:-1]
-		data = (await reader.read(1024)).decode('utf8')
 
 		try:  # Если можем преобразовать текст, значит всё ок
+			data = (await reader.read(1024)).decode('utf8')
+			print(data)
 			data = ast.literal_eval(data)
 		except:  # Тут мы можем получить только пустую строку, если была получена пустая строка, значит пользователь вышел
 			print("exc", user)
@@ -67,8 +72,10 @@ async def handle_client(reader, writer):
 				print(client)
 				client.pop(user)
 				print(client)
+				writer.close()
 				break
 			else:
+				writer.close()
 				break
 
 		print(data)
@@ -84,6 +91,11 @@ async def handle_client(reader, writer):
 
 		elif data[0] == "Запрос данных": # Пользователю отправляется строка(массив) со всеми своими данными
 			response = client[user].GetInfo()
+
+		elif data[0] == "Обновление данных":
+			response = client[user].update(data[1], data[2], data[3], data[4])
+			await writer.drain()
+			continue
 
 
 	# elif data[0] in dir(User):  # тут не работает.
