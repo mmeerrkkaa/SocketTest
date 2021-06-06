@@ -9,7 +9,7 @@ def soc_open(addres, name):
 	global soc
 
 	soc = socket.socket()
-	soc.connect((addres[0], addres[1]))
+	soc.connect((addres[0], int(addres[1])))
 
 	soc.send(f"{name}\n".encode())
 	sleep(0.2)
