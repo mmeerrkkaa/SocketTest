@@ -9,7 +9,7 @@ def soc_open(addres, name):
 	global soc
 
 	soc = socket.socket()
-	soc.connect((addres, 15557))
+	soc.connect((addres[0], addres[1]))
 
 	soc.send(f"{name}\n".encode())
 	sleep(0.2)
@@ -124,8 +124,7 @@ class Game:
 
 			except: print("Err")
 
-#addres = input("Айпи: ")
-addres = "localhost"
+addres = input("Адрес: ").replace(":", " ").split()
 #soc.connect(("127.0.0.1", 8989))
 
 Game(input("Ник: "))
