@@ -8,17 +8,23 @@ import sys
 def soc_open(addres, name):
 	global soc
 
-	soc = socket.socket()
-	soc.connect((addres[0], int(addres[1])))
+	try:
+		soc = socket.socket()
+		soc.connect((addres[0], int(addres[1])))
 
-	soc.send(f"{name}\n".encode())
-	sleep(0.2)
-	soc.send(f"['Connection']\n".encode())
+		soc.send(f"{name}\n".encode())
+		sleep(0.2)
+		soc.send(f"['Connection']\n".encode())
 
-	data = soc.recv(1024).decode()
-	if data == "Аккаунт уже в сети":
-		print(data)
-		sys.exit()
+		data = soc.recv(1024).decode()
+		if data == "Аккаунт уже в сети":
+			print(data)
+			sys.exit()
+
+	except:
+		print("Ошибка подключения")
+		addres = input("Адрес: ").replace(":", " ").split()
+		soc_open(addres)
 
 
 
