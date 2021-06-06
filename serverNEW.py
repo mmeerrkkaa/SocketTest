@@ -64,11 +64,15 @@ async def handle_client(reader, writer):
 
 		try:  # Если можем преобразовать текст, значит всё ок
 			data = (await reader.read(1024)).decode('utf8')
-			print(data)
 			data = ast.literal_eval(data)
-		except:  # Тут мы можем получить только пустую строку, если была получена пустая строка, значит пользователь вышел
+		except Exception as ex:  # Тут мы можем получить только пустую строку, если была получена пустая строка, значит пользователь вышел
+			template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+			message = template.format(type(ex).__name__, ex.args)
+			print(message)
+
 			print("exc", user)
 			if user in client:
+				print(f"[{user}] Отключился")
 				print(client)
 				client.pop(user)
 				print(client)
@@ -78,12 +82,15 @@ async def handle_client(reader, writer):
 				writer.close()
 				break
 
-		print(data)
 		# тут я буду принимать команды и обрабатывать. Шифрования нет, т.к тренировочный проект
 		if data[0] == "Connection":
-			print(client)
+			#print(client, user)
 			if user in client:
-				response = "Аккаунт уже в сети."
+				response = "Аккаунт уже в сети"
+				writer.write(response.encode('utf8'))
+				await writer.drain()
+				writer.close()
+				break
 			else:
 				Users = User(user)
 				client[user] = Users
@@ -96,6 +103,13 @@ async def handle_client(reader, writer):
 			response = client[user].update(data[1], data[2], data[3], data[4])
 			await writer.drain()
 			continue
+
+		elif data[0] == "Online":
+			response = str(len(client))
+
+		elif data[0] == "Top":
+			response = str(cursor.execute(f"SELECT name, games, atmps, log FROM users ORDER BY games DESC;").fetchall())
+			print(f"[{user}] Запрос данных топа")
 
 
 	# elif data[0] in dir(User):  # тут не работает.
