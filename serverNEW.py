@@ -68,14 +68,14 @@ async def handle_client(reader, writer):
 		except Exception as ex:  # Тут мы можем получить только пустую строку, если была получена пустая строка, значит пользователь вышел
 			template = "An exception of type {0} occurred. Arguments:\n{1!r}"
 			message = template.format(type(ex).__name__, ex.args)
-			print(message)
+			#print(message)
 
 			print("exc", user)
 			if user in client:
 				print(f"[{user}] Отключился")
-				print(client)
+				#print(client)
 				client.pop(user)
-				print(client)
+				#print(client)
 				writer.close()
 				break
 			else:
@@ -109,7 +109,7 @@ async def handle_client(reader, writer):
 
 		elif data[0] == "Top":
 			response = str(cursor.execute(f"SELECT name, games, atmps, log FROM users ORDER BY games DESC;").fetchall())
-			print(f"[{user}] Запрос данных топа")
+			print(f"[{user}] Запрашивает данных топа")
 
 
 	# elif data[0] in dir(User):  # тут не работает.
