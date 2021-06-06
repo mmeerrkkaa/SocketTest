@@ -65,7 +65,7 @@ class Game:
 		poptk = 0
 
 		while 1:
-			print(Num)
+			#print(Num)
 			a = int(input("Выберите число: "))
 			poptk += 1
 			if a == Num:
