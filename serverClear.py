@@ -1,4 +1,3 @@
-import jpysocket
 import socket
 import asyncio
 
