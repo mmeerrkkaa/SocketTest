@@ -14,10 +14,10 @@ cursor.execute(f"CREATE TABLE users(name STRING, games INTEGER, atmps INTEGER, l
 conn.commit()
 
 
-client = {}  # тут я буду хранить подключившивхся игроков (класс хранить)
+client = {}  
 
 
-# тут мы выполняем все действия связанные с аккаунтами (в будущем по крайне мере)
+
 class User:
 	def __init__(self, name):
 		self.name = name
